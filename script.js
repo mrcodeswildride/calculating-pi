@@ -1,6 +1,6 @@
 let number = document.getElementById(`number`)
 let piButton = document.getElementById(`piButton`)
-let piParagraph = document.getElementById(`piParagraph`)
+let box = document.getElementById(`box`)
 
 piButton.addEventListener(`click`, calculatePi)
 
@@ -12,23 +12,28 @@ function calculatePi() {
 
   if (numberValue != `` && !isNaN(numberValue)) {
     if (numberValue < 6 || numberValue > 100663296) {
-      piParagraph.innerHTML = `Number of sides must be between 6 and 100,663,296.`
+      box.innerHTML = `Number of sides must be between 6 and 100,663,296.`
     }
     else {
-      let side1 = 1
-      let numSides = 6
+      let sides = []
+      sides[6] = 1
 
       for (let i = 12; i <= numberValue; i *= 2) {
-        let a = Math.sqrt(1 - Math.pow(side1 / 2, 2))
+        let a = Math.sqrt(1 - Math.pow(sides[i/2] / 2, 2))
         let b = 1 - a
-        let side2 = Math.sqrt(Math.pow(b, 2) + Math.pow(side1 / 2, 2))
 
-        side1 = side2
-        numSides = i
+        sides[i] = Math.sqrt(Math.pow(b, 2) + Math.pow(sides[i/2] / 2, 2))
       }
 
-      let c = side1 * numSides
-      piParagraph.innerHTML = `Pi: ${c / 2}`
+      box.innerHTML = ``
+      createRow(`# of Sides`, `<strong>Pi Approximation</strong>`)
+
+      for (let i = 6; i <= numberValue; i *= 2) {
+        let c = i * sides[i]
+        let pi = c / 2
+
+        createRow(i, pi)
+      }
     }
   }
 
@@ -39,4 +44,20 @@ function keyPressed(event) {
   if (event.keyCode == 13) {
     calculatePi()
   }
+}
+
+function createRow(key, value) {
+  let row = document.createElement(`div`)
+  row.classList.add(`row`)
+  box.appendChild(row)
+
+  let keyDiv = document.createElement(`div`)
+  keyDiv.classList.add(`key`)
+  keyDiv.innerHTML = key
+  row.appendChild(keyDiv)
+
+  let valueDiv = document.createElement(`div`)
+  valueDiv.classList.add(`value`)
+  valueDiv.innerHTML = value
+  row.appendChild(valueDiv)
 }
